@@ -1,17 +1,16 @@
 import mongoose from "mongoose";
+import bcrypt from 'bcryptjs'
 
 const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
       required: true,
-      trim: true,
     },
 
     lastName: {
       type: String,
       required: true,
-      trim: true,
     },
 
     email: {
@@ -26,7 +25,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-
     password: {
       type: String,
       required: true,
@@ -34,8 +32,8 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["Owner", "Staff", "Admin"],
-      default: "Staff",
+      enum: ["owner", "admin"],
+      default: "owner",
     },
 
     businessName: {
@@ -47,5 +45,17 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+userSchema.pre("save", async function(){
+  this.password = await bcrypt.hash(this.password,10);
+})
+
+userSchema.pre("findOneAndUpdate", async function() {
+  const update = this.getUpdate()
+  console.log(update)
+  if (update.password) {
+    update.password = await bcrypt.hash(update.password,10);
+  }
+})
 
 export default mongoose.model("User", userSchema);

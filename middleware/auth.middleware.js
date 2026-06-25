@@ -24,21 +24,21 @@ export const protect = (req, res, next) => {
         }
     } else {
         res.status(401).json({
-            message: "You need to be looged in"
+            message: "You need to be logged in"
         });
     }
 };
 
-export const authorize = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({
-        success: false,
-        message: "Access denied",
-      });
+
+export async function onlyAllowAdmin (req, res, next) {
+    try {
+         const role = req.user.role
+         if(role === "admin") {
+            next()
+         } else {
+            res.status(403).json({msg: "only for admins"})
+         }
+    } catch (error) {
+        res.status(401).json({msg: error.message})
     }
-
-    next();
-  };
-};
-
+}

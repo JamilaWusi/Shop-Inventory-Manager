@@ -20,13 +20,25 @@ export const createProduct = async (req, res) => {
 
 export const getProducts = async (req, res) => {
   try {
-    const products = await Product.find();
+    const { id, role } = req.user
+    if (role === "admin") {
+      const products = await Product.find();
 
-    res.status(200).json({
-      success: true,
-      count: products.length,
-      data: products,
-    });
+      res.status(200).json({
+        success: true,
+        count: products.length,
+        data: products,
+      });
+    } else {
+      const products = await Product.find({userId: id});
+
+      res.status(200).json({
+        success: true,
+        count: products.length,
+        data: products,
+      });
+    }
+
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -67,7 +79,7 @@ export const updateProduct = async (req, res) => {
     const { id } = req.params;
 
     const product = await Product.findByIdAndUpdate(id, req.body,
-         {
+      {
         new: true,
         runValidators: true,
       }
@@ -93,6 +105,6 @@ export const updateProduct = async (req, res) => {
 };
 
 //const products = await Product.find()
-  //.populate("category", "name")
-  //.populate("supplier", "supplierName")
-  //.populate("createdBy", "firstName lastName");
+//.populate("category", "name")
+//.populate("supplier", "supplierName")
+//.populate("createdBy", "firstName lastName");

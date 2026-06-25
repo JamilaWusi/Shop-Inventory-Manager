@@ -10,25 +10,21 @@ import stockRoutes from "./routes/stock.route.js";
 import supplierRoutes from "./routes/supplier.route.js";
 import categoryRoutes from "./routes/category.route.js";
 
-import { protect } from "./middleware/auth.middleware.js";
-
+import { onlyAllowAdmin, protect } from "./middleware/auth.middleware.js";
 
 dotenv.config();
 
-
 const app = express();
 
-
 connectDB();
-
 
 app.use(cors());
 app.use(express.json());
 
 
 app.use("/api/auth", authRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/users", userRoutes);
+app.use("/api/products", protect, productRoutes);
+app.use("/api/users", protect, onlyAllowAdmin, userRoutes);
 app.use("/api/stock", stockRoutes);
 app.use("/api/suppliers", supplierRoutes);
 app.use("/api/categories", categoryRoutes);
