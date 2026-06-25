@@ -10,6 +10,8 @@ import stockRoutes from "./routes/stock.route.js";
 import supplierRoutes from "./routes/supplier.route.js";
 import categoryRoutes from "./routes/category.route.js";
 
+import { protect } from "./middleware/auth.middleware.js";
+
 
 dotenv.config();
 

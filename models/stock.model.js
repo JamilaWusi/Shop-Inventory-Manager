@@ -7,24 +7,20 @@ const stockTransactionSchema = new mongoose.Schema(
       ref: "Product",
       required: true,
     },
-
     transactionType: {
       type: String,
       enum: ["Stock In", "Stock Out", "Adjustment"],
       required: true,
     },
-
     quantity: {
       type: Number,
       required: true,
       min: 1,
     },
-
     reason: {
       type: String,
       trim: true,
     },
-
     performedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

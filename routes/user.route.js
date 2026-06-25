@@ -1,4 +1,6 @@
 import express from "express";
+import { protect } from "../middleware/auth.middleware.js";
+import { authorize } from "../middleware/auth.middleware.js";
 import {
   createUser,
   getUsers,
