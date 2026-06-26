@@ -4,12 +4,14 @@ import {
   getSuppliers,
   updateSupplier,
   deleteSupplier,
+  getSupplier
 } from "../controllers/supplier.controller.js";
 
 const router = express.Router();
 
 router.post("/", createSupplier);
 router.get("/", getSuppliers);
+router.get("/:id", getSupplier)
 router.put("/:id", updateSupplier);
 router.delete("/:id", deleteSupplier);
 

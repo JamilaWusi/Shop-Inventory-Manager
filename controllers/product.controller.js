@@ -2,7 +2,8 @@ import Product from "../models/product.model.js";
 
 export const createProduct = async (req, res) => {
   try {
-    const product = await Product.create(req.body);
+    const userId = req.user.id
+    const product = await Product.create({...req.body, createdBy: userId});
 
     res.status(201).json({
       success: true,
@@ -17,7 +18,6 @@ export const createProduct = async (req, res) => {
 };
 
 //get a product
-
 export const getProducts = async (req, res) => {
   try {
     const { id, role } = req.user
@@ -30,15 +30,13 @@ export const getProducts = async (req, res) => {
         data: products,
       });
     } else {
-      const products = await Product.find({userId: id});
-
+      const products = await Product.find({ userId: id });
       res.status(200).json({
         success: true,
         count: products.length,
         data: products,
       });
     }
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -46,6 +44,20 @@ export const getProducts = async (req, res) => {
     });
   }
 };
+
+//get single producet
+export const getSingleProduct = async (req, res) => {
+  try {
+    const id = req.params.id
+    const product = await Product.findById(id)
+    if (!product) {
+      return res.status(404).json({ msg: `Product not found` })
+    }
+    return res.status(200).json(product)
+  } catch (error) {
+    return res.status(500).json({ msg: error.message })
+  }
+}
 
 //delete a product
 export const deleteProduct = async (req, res) => {

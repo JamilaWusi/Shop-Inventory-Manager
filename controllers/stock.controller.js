@@ -3,12 +3,14 @@ import Product from "../models/product.model.js";
 
 export const createTransaction = async (req, res) => {
   try {
+
+    const {id} = req.user
+
     const {
       productId,
       transactionType,
       quantity,
-      reason,
-      performedBy,
+      reason
     } = req.body;
 
     const product = await Product.findById(productId);
@@ -21,32 +23,32 @@ export const createTransaction = async (req, res) => {
     }
 
     if (transactionType === "Stock In") {
-      product.currentStockQuantity += quantity;
+      product.quantity += quantity;
     }
 
     if (transactionType === "Stock Out") {
-      if (product.currentStockQuantity < quantity) {
+      if (product.quantity < quantity) {
         return res.status(400).json({
           success: false,
           message: "Insufficient stock",
         });
       }
 
-      product.currentStockQuantity -= quantity;
+      product.quantity -= quantity;
     }
 
     if (transactionType === "Adjustment") {
-      product.currentStockQuantity = quantity;
+      product.quantity = quantity;
     }
 
     await product.save();
 
-    const transaction = await StockTransaction.create({
+    const transaction = await Stock.create({
       productId,
       transactionType,
       quantity,
       reason,
-      performedBy,
+      performedBy : id,
     });
 
     res.status(201).json({
@@ -63,8 +65,20 @@ export const createTransaction = async (req, res) => {
 
 //get all stock transactions
 export const getTransactions = async (req, res) => {
+
   try {
-    const transactions = await StockTransaction.find()
+    const { role, id } = req.user
+    if (role !== "admin") {
+      const transactions = await Stock.find({ performedBy: id })
+        .populate("productId")
+        .populate("performedBy");
+      return res.status(200).json({
+        success: true,
+        count: transactions.length,
+        data: transactions,
+      });
+    }
+    const transactions = await Stock.find()
       .populate("productId")
       .populate("performedBy");
 
@@ -84,7 +98,7 @@ export const getTransactions = async (req, res) => {
 //delete transactions
 export const deleteTransaction = async (req, res) => {
   try {
-    const transaction = await StockTransaction.findByIdAndDelete(
+    const transaction = await Stock.findByIdAndDelete(
       req.params.id
     );
 

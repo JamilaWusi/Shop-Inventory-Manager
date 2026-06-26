@@ -19,13 +19,6 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true
     },
-    costPrice: {
-      type: Number
-    },
-    currentStockQuantity: {
-      type: Number,
-      default: 0
-    },
     reorderLevel: {
       type: Number,
       default: 0

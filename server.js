@@ -25,9 +25,9 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/products", protect, productRoutes);
 app.use("/api/users", protect, onlyAllowAdmin, userRoutes);
-app.use("/api/stock", stockRoutes);
-app.use("/api/suppliers", supplierRoutes);
-app.use("/api/categories", categoryRoutes);
+app.use("/api/stock", protect, stockRoutes);
+app.use("/api/suppliers", protect, supplierRoutes);
+app.use("/api/categories", protect, categoryRoutes);
 
 
 app.get("/", (req,res)=>{
