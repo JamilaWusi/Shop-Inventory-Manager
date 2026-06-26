@@ -95,6 +95,32 @@ export const getTransactions = async (req, res) => {
   }
 };
 
+//get a single transaction
+export const getTransactionById = async (req, res) => {
+  try {
+    const transaction = await Stock.findById(req.params.id)
+      .populate("productId", "productName sku")
+      .populate("performedBy", "firstName lastName email");
+
+    if (!transaction) {
+      return res.status(404).json({
+        success: false,
+        message: "Transaction not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: transaction,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 //delete transactions
 export const deleteTransaction = async (req, res) => {
   try {
